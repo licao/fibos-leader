@@ -8,7 +8,7 @@ let host;
 if (env === "dev") {
 	host = "http://127.0.0.1:8080";
 } else {
-	host = "http://54.255.134.172:8080";
+	host = "http://task.fibos.io:8080";
 }
 
 console.log("env:%s host:%s", env, host);
