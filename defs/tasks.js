@@ -29,7 +29,7 @@ module.exports = (db) => {
 		hex_id: {
 			unique: true,
 			type: "text",
-			size: 32
+			size: 128
 		},
 		lastblocknum: {
 			type: "integer",

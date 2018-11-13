@@ -14,6 +14,11 @@ var httpServer = new http.Server("", config.port, [(req) => {
 			req.response.write("pong");
 		},
 		'/1.0/app': app,
+		'/1.0/check': (req) => {
+			let rs = app.db(db => {
+
+			});
+		},
 		"*": (req) => {
 			//404
 		}

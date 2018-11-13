@@ -3,15 +3,6 @@ let uuid = require("uuid");
 let fibos = require("fibos");
 
 function getTask() {
-	/*
-		{	
-			"id":1,
-			"taskconfig":{
-				"port":8801,
-				"stop_block_num":1130887
-			}
-		}
-	*/
 	let hex_id = uuid.random().hex();
 
 	let r = http.post("http://54.255.134.172:8080/1.0/app/tasks/getTask", {
