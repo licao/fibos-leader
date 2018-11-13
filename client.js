@@ -3,6 +3,8 @@ let http = require("http");
 let uuid = require("uuid");
 let fibos = require("fibos");
 
+console.notice(process.argv);
+
 let lastblocknum = 0;
 let hex_id = process.argv[2] + "_" + uuid.random().hex();
 let r = http.post("http://task.fibos.io:8080/1.0/app/tasks/getTask", {
