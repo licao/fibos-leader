@@ -25,10 +25,27 @@ function getTask() {
 	return r;
 }
 
+function updateTask(hex_id, lastblocknum) {
+	let r = http.post("http://127.0.0.1:8080/1.0/app/tasks/updateTask", {
+		json: {
+			hex_id: hex_id,
+			lastblocknum: lastblocknum
+		}
+	}).json();
+
+	console.log("r:", r);
+
+	return r;
+}
+
 
 let task = getTask();
 
 console.error(task);
+
+updateTask(task.hex_id, 110);
+
+process.exit();
 
 let port = task.taskconfig.port;
 let hex_id = task.hex_id;

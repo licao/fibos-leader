@@ -88,12 +88,46 @@ module.exports = (db) => {
 				return {
 					success: result
 				}
+			},
+			updateTask: (req, data) => {
+				/**
+				 * @api {POST} /1.0/app/tasks/getTask getTask
+				 * @apiName getTask
+				 * @apiVersion 1.0.0
+				 * @apiGroup Tasks
+				 * @apiDescription 获取任务
+				 *
+				 * @apiParam {string} hex_id 唯一id
+				 *
+				 * @apiParamExample {json} Request-Example:
+				 *     {
+				 *         hex_id: "122222222222",			
+				 *     }
+				 *
+				 */
+
+				let hex_id = data.hex_id;
+				let lastblocknum = data.lastblocknum;
+
+				if (!hex_id || !lastblocknum) return {
+					error: {
+						code: 4000421,
+						message: "hex_id or lastblocknum is null"
+					}
+				};
+
+				let r = db.driver.execQuerySync("UPDATE `tasks` set lastblocknum = ?, updatedAt = ? where hex_id = ?;", [lastblocknum, new Date(), hex_id]);
+
+				return {
+					success: r.affected === 1 ? "success" : "error"
+				}
 			}
 		},
 		ACL: function(session) {
 			return {
 				"*": {
-					"getTask": true
+					"getTask": true,
+					"updateTask": true
 				}
 			}
 		},
