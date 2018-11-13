@@ -166,8 +166,11 @@ module.exports = (db) => {
 		console.log("work length:", rs.length);
 
 		if (rs.length) {
-			rs = db.driver.execQuerySync('UPDATE `tasks` set hex_id = null, lastblocknum = 0, repeatblocknum = 0 where hex_id is not null and updatedAt < ?;', [updatedAt]);
-			console.warn("work affected:", rs.affected);
+			rs.forEach((o) => {
+				let r = db.driver.execQuerySync('UPDATE `tasks` set hex_id = null, lastblocknum = 0, repeatblocknum = 0 where hex_id is not null and updatedAt < ? and id = ?;', [updatedAt, o.id]);
+
+				if (r.affected === 1) console.warn("work affected id:%s", o.id);
+			});
 		}
 	};
 

@@ -43,15 +43,20 @@ fibos.on("action", function(act) {
 });
 
 setInterval(function() {
-	let r = http.post("http://task.fibos.io:8080/1.0/app/tasks/updateTask", {
-		json: {
-			hex_id: hex_id,
-			lastblocknum: lastblocknum
-		}
-	}).json();
-	console.log("r:", r);
+	try {
+		let r = http.post("http://task.fibos.io:8080/1.0/app/tasks/updateTask", {
+			json: {
+				hex_id: hex_id,
+				lastblocknum: lastblocknum
+			}
+		}).json();
+		console.log("r:", r);
 
-	if (r !== "success") fibos.stop();
+		if (r !== "success") fibos.stop();
+	} catch (e) {
+		console.error(e.stack);
+	}
+
 
 }, 5000);
 

@@ -69,6 +69,7 @@ var httpServer = new http.Server("", config.port, [(req) => {
 							hex_id: o.hex_id,
 							lastblocknum: o.lastblocknum,
 							stop_block_num: o.taskconfig.stop_block_num,
+							repeatblocknum: o.repeatblocknum,
 							updatedAt: o.updatedAt
 						});
 					}
