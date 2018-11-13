@@ -161,13 +161,13 @@ module.exports = (db) => {
 	Tasks.work = () => {
 		let updatedAt = new Date(new Date().getTime() - 6 * 60 * 1000);
 
-		let rs = db.driver.execQuerySync('select * from `tasks` where hex_id is not null and updatedAt < ?;', [updatedAt]);
+		let rs = db.driver.execQuerySync('select * from `tasks` where hex_id is not null and updatedAt < ? and repeatblocknum < 5;', [updatedAt]);
 
 		console.log("work length:", rs.length);
 
 		if (rs.length) {
 			rs.forEach((o) => {
-				let r = db.driver.execQuerySync('UPDATE `tasks` set hex_id = null, lastblocknum = 0, repeatblocknum = 0 where hex_id is not null and updatedAt < ? and id = ?;', [updatedAt, o.id]);
+				let r = db.driver.execQuerySync('UPDATE `tasks` set hex_id = null, lastblocknum = 0, repeatblocknum = 0 where hex_id is not null and updatedAt < ? and repeatblocknum < 5 and id = ?;', [updatedAt, o.id]);
 
 				if (r.affected === 1) console.warn("work affected id:%s", o.id);
 			});

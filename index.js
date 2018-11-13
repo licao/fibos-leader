@@ -65,13 +65,19 @@ var httpServer = new http.Server("", config.port, [(req) => {
 					} else {
 						runned++;
 
-						live.push({
+
+						let data = {
+							id: o.id,
 							hex_id: o.hex_id,
 							lastblocknum: o.lastblocknum,
 							stop_block_num: o.taskconfig.stop_block_num,
 							repeatblocknum: o.repeatblocknum,
 							updatedAt: o.updatedAt
-						});
+						};
+						if (o.repeatblocknum < 5)
+							live.push(data);
+						else
+							dead.push(data);
 					}
 				});
 			});
@@ -79,7 +85,8 @@ var httpServer = new http.Server("", config.port, [(req) => {
 			req.response.write(JSON.stringify({
 				unrunned: unrunned,
 				runned: runned,
-				live: live
+				live: live,
+				dead: dead
 			}));
 		},
 		"*": (req) => {
