@@ -22,10 +22,6 @@ module.exports = (db) => {
 			type: "object",
 			big: true
 		},
-		status: {
-			type: "text",
-			size: 32
-		},
 		hex_id: {
 			unique: true,
 			type: "text",
@@ -81,7 +77,7 @@ module.exports = (db) => {
 					result.id = rs[0].id;
 					result.taskconfig = JSON.parse(rs[0].taskconfig.toString());
 
-					let r = db.driver.execQuerySync("UPDATE `tasks` set status = 'running', hex_id = ?, updatedAt = ? where id = ? and hex_id is null;", [hex_id, new Date(), result.id]);
+					let r = db.driver.execQuerySync("UPDATE `tasks` set hex_id = ?, updatedAt = ? where id = ? and hex_id is null;", [hex_id, new Date(), result.id]);
 					if (r.affected === 1) break;
 				}
 
@@ -133,6 +129,19 @@ module.exports = (db) => {
 		},
 		OACL: function(session) {}
 	});
+
+	Tasks.work = () => {
+		let updatedAt = new Date(new Date().getTime() - 6 * 60 * 1000);
+
+		let rs = db.driver.execQuerySync('select * from `tasks` where hex_id is not null and updatedAt < ?;', [updatedAt]);
+
+		console.log("work length:", rs.length);
+
+		if (rs.length) {
+			rs = db.driver.execQuerySync('UPDATE `tasks` set hex_id = null, lastblocknum = null where hex_id is not null and updatedAt < ?;', [updatedAt]);
+			console.log("work affected:", rs.affected);
+		}
+	};
 
 	return Tasks;
 }

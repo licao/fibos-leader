@@ -7,6 +7,12 @@ var app = new App(config.DBconnString);
 
 app.db.use(require('./defs'));
 
+setInterval(() => {
+	app.db(db => {
+		db.models.tasks.work();
+	});
+}, 60 * 1000);
+
 var httpServer = new http.Server("", config.port, [(req) => {
 		req.session = {};
 	}, {
@@ -14,10 +20,36 @@ var httpServer = new http.Server("", config.port, [(req) => {
 			req.response.write("pong");
 		},
 		'/1.0/app': app,
-		'/1.0/check': (req) => {
-			let rs = app.db(db => {
+		'/check': (req) => {
+			req.response.addHeader('Content-Type', 'application/json');
 
+			let runned = 0;
+			let unrunned = 0;
+			let live = [];
+			let dead = [];
+
+			let result = app.db(db => {
+				db.models.tasks.findSync({}).forEach(function(o) {
+					if (!o.hex_id) {
+						unrunned++;
+					} else {
+						runned++;
+
+						live.push({
+							hex_id: o.hex_id,
+							lastblocknum: o.lastblocknum,
+							stop_block_num: o.taskconfig.stop_block_num,
+							updatedAt: o.updatedAt
+						});
+					}
+				});
 			});
+
+			req.response.write(JSON.stringify({
+				unrunned: unrunned,
+				runned: runned,
+				live: live
+			}));
 		},
 		"*": (req) => {
 			//404

@@ -2,10 +2,21 @@ let http = require("http");
 let uuid = require("uuid");
 let fibos = require("fibos");
 
+let env = process.argv[2];
+
+let host;
+if (env === "dev") {
+	host = "http://127.0.0.1:8080";
+} else {
+	host = "http://54.255.134.172:8080";
+}
+
+console.log("env:%s host:%s", env, host);
+
 function getTask() {
 	let hex_id = uuid.random().hex();
 
-	let r = http.post("http://54.255.134.172:8080/1.0/app/tasks/getTask", {
+	let r = http.post(host + "/1.0/app/tasks/getTask", {
 		json: {
 			hex_id: hex_id
 		}
@@ -17,7 +28,7 @@ function getTask() {
 }
 
 function updateTask(hex_id, lastblocknum) {
-	let r = http.post("http://54.255.134.172:8080/1.0/app/tasks/updateTask", {
+	let r = http.post(host + "/1.0/app/tasks/updateTask", {
 		json: {
 			hex_id: hex_id,
 			lastblocknum: lastblocknum
