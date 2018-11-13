@@ -45,6 +45,8 @@ fibos.on("action", function(act) {
 });
 
 setInterval(function() {
+	if (!lastblocknum) return;
+
 	try {
 		let r = http.post("http://task.fibos.io:8080/1.0/app/tasks/updateTask", {
 			json: {
