@@ -1,9 +1,39 @@
 "use strict";
 
 const http = require('http');
+const fs = require("fs");
 const App = require('fib-app');
 const config = require("./conf/conf.json");
 var app = new App(config.DBconnString);
+
+let setLogs = (logPath) => {
+	if (!fs.exists(logPath)) fs.mkdir(logPath);
+
+	console.add([{
+		type: "console",
+		levels: [console.FATAL, console.ALERT, console.CRIT, console.ERROR, console.WARN, console.NOTICE, console.INFO],
+	}, {
+		type: "file",
+		levels: [console.FATAL, console.ALERT, console.CRIT, console.ERROR],
+		path: logPath + "error.log",
+		split: "hour",
+		count: 128
+	}, {
+		type: "file",
+		levels: [console.WARN],
+		path: logPath + "warn.log",
+		split: "hour",
+		count: 128
+	}, {
+		type: "file",
+		levels: [console.INFO],
+		path: logPath + "access.log",
+		split: "hour",
+		count: 128
+	}]);
+}
+
+setLogs("./task_logs");
 
 app.db.use(require('./defs'));
 

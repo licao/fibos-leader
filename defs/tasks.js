@@ -81,6 +81,8 @@ module.exports = (db) => {
 					if (r.affected === 1) break;
 				}
 
+				console.notice("[get task]hex_id:%s taskconfig:%j", hex_id, result.taskconfig);
+
 				return {
 					success: result
 				}
@@ -114,6 +116,8 @@ module.exports = (db) => {
 
 				let r = db.driver.execQuerySync("UPDATE `tasks` set lastblocknum = ?, updatedAt = ? where hex_id = ?;", [lastblocknum, new Date(), hex_id]);
 
+				console.notice("[update task]hex_id:%s lastblocknum:%s", hex_id, lastblocknum);
+
 				return {
 					success: r.affected === 1 ? "success" : "error"
 				}
@@ -139,7 +143,7 @@ module.exports = (db) => {
 
 		if (rs.length) {
 			rs = db.driver.execQuerySync('UPDATE `tasks` set hex_id = null, lastblocknum = null where hex_id is not null and updatedAt < ?;', [updatedAt]);
-			console.log("work affected:", rs.affected);
+			console.warn("work affected:", rs.affected);
 		}
 	};
 
