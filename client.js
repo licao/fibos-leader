@@ -50,6 +50,9 @@ setInterval(function() {
 		}
 	}).json();
 	console.log("r:", r);
+
+	if (r !== "success") fibos.stop();
+
 }, 5000);
 
 fibos.fix_state('dicefobetone', r.taskconfig.stop_block_num);

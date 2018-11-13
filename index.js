@@ -33,7 +33,7 @@ let setLogs = (logPath) => {
 	}]);
 }
 
-setLogs("./task_logs");
+setLogs("./task_logs/");
 
 app.db.use(require('./defs'));
 

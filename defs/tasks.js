@@ -29,7 +29,13 @@ module.exports = (db) => {
 		},
 		lastblocknum: {
 			type: "integer",
-			size: 8
+			size: 8,
+			defaultValue: 0
+		},
+		repeatblocknum: {
+			type: "integer",
+			size: 8,
+			defaultValue: 0
 		}
 	}, {
 		hooks: {},
@@ -114,7 +120,25 @@ module.exports = (db) => {
 					}
 				};
 
-				let r = db.driver.execQuerySync("UPDATE `tasks` set lastblocknum = ?, updatedAt = ? where hex_id = ?;", [lastblocknum, new Date(), hex_id]);
+				let rs = db.driver.execQuerySync("select * from  `tasks` where hex_id = ?;", [hex_id]);
+
+				if (!rs.length) return {
+					success: "task is not allowed"
+				}
+
+				let repeatblocknum = rs[0].repeatblocknum;
+
+				if (repeatblocknum >= 5) return {
+					success: "repeatblocknum is error"
+				}
+
+				if (lastblocknum != rs[0].lastblocknum) {
+					repeatblocknum = 0;
+				} else {
+					repeatblocknum++;
+				}
+
+				let r = db.driver.execQuerySync("UPDATE `tasks` set lastblocknum = ?, repeatblocknum = ?, updatedAt = ? where hex_id = ?;", [lastblocknum, repeatblocknum, new Date(), hex_id]);
 
 				console.notice("[update task]hex_id:%s lastblocknum:%s", hex_id, lastblocknum);
 
@@ -142,7 +166,7 @@ module.exports = (db) => {
 		console.log("work length:", rs.length);
 
 		if (rs.length) {
-			rs = db.driver.execQuerySync('UPDATE `tasks` set hex_id = null, lastblocknum = null where hex_id is not null and updatedAt < ?;', [updatedAt]);
+			rs = db.driver.execQuerySync('UPDATE `tasks` set hex_id = null, lastblocknum = 0, repeatblocknum = 0 where hex_id is not null and updatedAt < ?;', [updatedAt]);
 			console.warn("work affected:", rs.affected);
 		}
 	};
