@@ -6,14 +6,21 @@ let fs = require("fs");
 
 let rootPath = "/blockData/";
 let dataPath;
+let name;
+let port;
 while (true) {
-	let name = console.readLine("name:");
+	name = console.readLine("name:");
 
 	dataPath = rootPath + name;
 
 	if (!fs.exists(dataPath)) {
 
 		fs.mkdir(dataPath);
+
+		while (true) {
+			port = Number(console.readLine("port:"));
+			if (port) break;
+		}
 
 		process.run("tar", ["-zxvSf", rootPath + "data.tar.gz", "-C", dataPath]);
 
@@ -44,7 +51,8 @@ fibos.load("net", {
 		"ca-p2p.fibos.io:9870",
 		"sl-p2p.fibos.io:9870",
 	],
-	"max-clients": 100
+	"max-clients": 100,
+	"p2p-listen-endpoint": "0.0.0.0:" + port
 });
 
 fibos.load("producer", {
